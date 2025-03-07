@@ -4,6 +4,11 @@ import { bangs as customBangs } from "./custom-bang";
 import "./global.css";
 import fuzzysort from "fuzzysort";
 
+const bangs = [
+	...defaultBangs.filter((bang) => !customBangs.some((c) => c.t === bang.t)),
+	...customBangs,
+];
+
 function noSearchDefaultPageRender() {
 	const app = document.querySelector<HTMLDivElement>("#app")!;
 	app.innerHTML = `
@@ -22,6 +27,19 @@ function noSearchDefaultPageRender() {
           <button class="copy-button">
             <img src="/clipboard.svg" alt="Copy" />
           </button>
+        </div>
+        <div class="test-query-container">
+          <div class="url-container">
+            <input
+              id="test-query-input"
+              type="text"
+              class="url-input"
+              placeholder="Enter a query with bang (e.g. !g cats)"
+            />
+            <button id="test-query-button" class="test-button">
+              Test
+            </button>
+          </div>
         </div>
 				<div>
 					<input
@@ -50,6 +68,29 @@ function noSearchDefaultPageRender() {
 
 	const bangInput = app.querySelector<HTMLInputElement>("#bang-search")!;
 	const bangList = app.querySelector<HTMLDivElement>(".bang-list")!;
+
+	// Test query functionality
+	const testQueryInput =
+		app.querySelector<HTMLInputElement>("#test-query-input")!;
+	const testQueryButton =
+		app.querySelector<HTMLButtonElement>("#test-query-button")!;
+
+	testQueryButton.addEventListener("click", () => {
+		const query = testQueryInput.value.trim();
+		if (query) {
+			// Redirect to the current site with the query parameter
+			window.location.href = `${window.location.origin}/?q=${encodeURIComponent(
+				query
+			)}`;
+		}
+	});
+
+	// Allow pressing Enter to submit
+	testQueryInput.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") {
+			testQueryButton.click();
+		}
+	});
 
 	copyButton.addEventListener("click", async () => {
 		await navigator.clipboard.writeText(urlInput.value);
@@ -90,11 +131,6 @@ function noSearchDefaultPageRender() {
 		}, 300);
 	});
 }
-
-const bangs = [
-	...defaultBangs.filter((bang) => !customBangs.some((c) => c.t === bang.t)),
-	...customBangs,
-];
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);

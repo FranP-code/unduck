@@ -129,6 +129,36 @@ textarea {
   background: #28a745;
 }
 
+/* Test query styles */
+.test-query-container {
+  margin-top: 24px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.test-button {
+  padding: 8px 16px;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.test-button:hover {
+  background-color: #3367d6;
+}
+
+.test-button:active {
+  background-color: #2a56c6;
+}
+
+.query-hint {
+  color: #666;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
 /* Add footer styles */
 .footer {
   position: fixed;

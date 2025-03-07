@@ -22,6 +22,6 @@ export const bangs: Bang[] = [
 		s: "Mercado Libre",
 		sc: "Search",
 		t: "ml",
-		u: "https://www.mercadolibre.com.ar/search?q={{{s}}}",
+		u: "https://listado.mercadolibre.com.ar/{{{s}}}",
 	},
 ];
