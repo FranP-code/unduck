@@ -1,6 +1,8 @@
+import { Bang } from "./bang.d";
 import { bangs as defaultBangs } from "./bang";
 import { bangs as customBangs } from "./custom-bang";
 import "./global.css";
+import fuzzysort from "fuzzysort";
 
 function noSearchDefaultPageRender() {
 	const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -10,7 +12,8 @@ function noSearchDefaultPageRender() {
         <h1>Und*ck</h1>
         <p>DuckDuckGo's bang redirects are too slow. Add the following URL as a custom search engine to your browser. Enables <a href="https://duckduckgo.com/bang.html" target="_blank">all of DuckDuckGo's bangs.</a></p>
         <div class="url-container"> 
-          <input 
+          <input
+						id="url-input"
             type="text" 
             class="url-input"
             value="${`${window.location.origin}/?q=%s`}"
@@ -20,6 +23,16 @@ function noSearchDefaultPageRender() {
             <img src="/clipboard.svg" alt="Copy" />
           </button>
         </div>
+				<div>
+					<input
+						id="bang-search"
+						type="text"
+						placeholder="Search for a bang"
+						class="url-input"
+					/>
+					<div class="bang-list">
+					</div>
+				</div>
       </div>
       <footer class="footer">
         <a href="https://t3.chat" target="_blank">t3.chat</a>
@@ -33,7 +46,10 @@ function noSearchDefaultPageRender() {
 
 	const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
 	const copyIcon = copyButton.querySelector("img")!;
-	const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+	const urlInput = app.querySelector<HTMLInputElement>("#url-input")!;
+
+	const bangInput = app.querySelector<HTMLInputElement>("#bang-search")!;
+	const bangList = app.querySelector<HTMLDivElement>(".bang-list")!;
 
 	copyButton.addEventListener("click", async () => {
 		await navigator.clipboard.writeText(urlInput.value);
@@ -42,6 +58,36 @@ function noSearchDefaultPageRender() {
 		setTimeout(() => {
 			copyIcon.src = "/clipboard.svg";
 		}, 2000);
+	});
+
+	// Wait for user to stop typing for 300ms
+	let timeout: number;
+	bangInput.addEventListener("keyup", (e) => {
+		if (timeout) {
+			clearTimeout(timeout);
+		}
+		timeout = setTimeout(() => {
+			const searchTerm = (e.target as HTMLInputElement).value;
+			if (!searchTerm) {
+				bangList.innerHTML = "";
+				return;
+			}
+
+			const results = fuzzysort
+				.go(searchTerm, bangs, {
+					keys: ["d", "s"],
+				})
+				.map((result) => result.obj);
+
+			bangList.innerHTML = results
+				.map((bang: Bang) => {
+					return `<div class="bang-item">
+						<span class="bang-name">!${bang.t}</span>
+						<span class="bang-description">${bang.d}</span>
+					</div>`;
+				})
+				.join("");
+		}, 300);
 	});
 }
 

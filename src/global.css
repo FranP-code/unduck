@@ -83,6 +83,7 @@ textarea {
   align-items: center;
   gap: 8px;
   margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 /* Add this new style */
@@ -147,4 +148,9 @@ textarea {
 
 .footer a:hover {
   color: #333;
+}
+
+.bang-list {
+  height: 30vh;
+  overflow: auto;
 }
