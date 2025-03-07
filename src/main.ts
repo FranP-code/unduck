@@ -1,4 +1,5 @@
-import { bangs } from "./bang";
+import { bangs as defaultBangs } from "./bang";
+import { bangs as customBangs } from "./custom-bang";
 import "./global.css";
 
 function noSearchDefaultPageRender() {
@@ -43,6 +44,11 @@ function noSearchDefaultPageRender() {
 		}, 2000);
 	});
 }
+
+const bangs = [
+	...defaultBangs.filter((bang) => !customBangs.some((c) => c.t === bang.t)),
+	...customBangs,
+];
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
